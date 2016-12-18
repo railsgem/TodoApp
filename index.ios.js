@@ -33,26 +33,24 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export default class TodoApp extends Component {
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        dataSource: new ListView.DataSource({
-          rowHasChanged: (row1, row2) => row1 !== row2,
-        })
-      };
-      this.itemsRef = this.getRef().child('items');
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      })
+    };
+    this.itemsRef = this.getRef().child('items');
+  }
 
   getRef() {
     return firebaseApp.database().ref();
   }
 
   componentDidMount() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
-    })
+    this.listenForItems(this.itemsRef);
   }
-
+  
   render() {
     return (
       <View style={styles.container}>
@@ -70,6 +68,7 @@ export default class TodoApp extends Component {
       </View>
     )
   }
+
 
   listenForItems(itemsRef) {
     itemsRef.on('value', (snap) => {
